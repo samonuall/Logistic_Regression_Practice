@@ -109,6 +109,10 @@ def sigmoid(x):
     s = 1 / (1 + np.exp(-x))
     return s
 
+def relu(x):
+    x[x <= 0] = 0
+    return x
+
 def init_with_zeros(dim):
     """
     Inputs:
@@ -127,7 +131,7 @@ def init_with_zeros(dim):
 
     return w, b
 
-def propagate(w, b, X, Y):
+def propagate(w, b, X, Y, activation=sigmoid):
     """
     Arguments:
     w -- weights, a numpy array of size (num_px * num_px * 3, 1)
@@ -141,7 +145,7 @@ def propagate(w, b, X, Y):
     db -- gradient of the loss with respect to b, thus same shape as b
     """
     z = w.T @ X + b #row vector of weighted sums, X.shape[0] is num_images
-    a = sigmoid(z) #activation function, apply sigmoid function to each weighted sum
+    a = activation(z) #activation function, apply given function to each weighted sum
     cost = -np.sum(Y*np.log(a) + (1 - Y) * np.log(1-a)) / X.shape[1]
 
     dw = np.matmul(X, (a - Y).T) / X.shape[1]
@@ -202,7 +206,7 @@ def optimize(w, b, X, Y, num_iterations, learning_rate, print_cost = False):
 
     return params, grads, costs
 
-def predict(w, b, X):
+def predict(w, b, X, activation=sigmoid):
     '''
     Predict whether the label is 0 or 1 using learned logistic regression parameters (w, b)
 
@@ -215,7 +219,7 @@ def predict(w, b, X):
     Y_prediction -- a numpy array (vector) containing all predictions (0/1) for the examples in X
     '''
     z = w.T @ X + b #row vector of weighted sums, X.shape[0] is num_images
-    a = sigmoid(z) #activation function, apply sigmoid function to each weighted sum
+    a = activation(z) #activation function, apply sigmoid function to each weighted sum
     a[np.where(a > .5)] = 1
     a[np.where(a <= .5)] = 0
     Y_prediction = a.reshape(1, X.shape[1])
