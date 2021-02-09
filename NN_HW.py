@@ -110,7 +110,7 @@ def sigmoid(x):
     return s
 
 def relu(x):
-    x[x <= 0] = 0
+    x[x < 0] = 0
     return x
 
 def init_with_zeros(dim):
